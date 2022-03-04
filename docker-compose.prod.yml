@@ -1,0 +1,21 @@
+version: "3.5"
+
+services:
+
+  api:
+    build:
+      context: .
+    restart: always
+    image: django_prod_api
+    container_name: django_prod_api
+    env_file: .env
+    ports:
+      - 8080:8080
+    networks:
+      - default
+      - jinx_network
+
+networks:
+  jinx_network:
+    external: false
+    name: jinx_network
