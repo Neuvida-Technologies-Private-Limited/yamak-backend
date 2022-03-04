@@ -4,8 +4,9 @@ from access.models import Country
 from main.settings.env import AUTH_APPLICATION_NAME
 
 
-def initialize_dev():
-
+def exec_initial_data():
+    '''Add initial data for development'''
+    
     print('initial country: India (IN. +91)')
     __add_update_country('India', 'IN', '91')
 
