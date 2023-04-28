@@ -12,50 +12,41 @@ from main.mixins.exceptions import BadRequestError
 from main.mixins.exceptions import UnAuthorizedError
 from main.mixins.views import APIResponse
 
-
-class OTPView(APIView, APIResponse):
-    """Generate and verifying OTP for consumer login"""
+class LoginView(APIView, APIResponse):
+    """Generate and verifying token for consumer via password"""
 
     def post(self, request):
 
         payload: dict = request.data
-        phone = payload.get('phone', None)
-        if not validations.is_valid_phone(phone):
-            raise BadRequestError(message='invalid phone')
+        email = payload.get('email', None)
+        if not validations.is_valid_email(email):
+            raise BadRequestError(message='invalid email')
 
-        country = profile_service.get_country(
-            country_code=payload.get('country_code', None),
-        )
-        if not country:
-            raise BadRequestError(message='invalid country')
+        password = payload.get('password', None)
+        if not password or validations.is_valid_password(password):
+            raise BadRequestError(message='invalid password')
 
-        request_type = payload.get('request_type', None)
-        if request_type == OTPRequestType.GENERATE:
-            access_util.generate_otp(
-                phone=phone,
-                dialing_code=country.dialing_code,
-            )
-            response = {
-                'country_code': country.country_code,
-                'phone': phone,
-                'request_type': request_type,
-            }
-        elif request_type == OTPRequestType.VERIFY:
+        user = profile_service.get_user_email(email=email)
 
-            otp = payload.get('otp', None)
-            response = access_util.verify_otp(
-                phone=phone,
-                otp=otp,
-                country=country,
-            )
-        else:
-            raise BadRequestError('invalid otp request type')
+        if not user:
+            raise BadRequestError('invalid user')
+        if not user.check_password(password):
+            raise BadRequestError('invalid password')
+
+        tokens = auth_service.create_auth_tokens(user=user)
+
+        response = {
+            'access_token': tokens.get('access_token'),
+            'refresh_token': tokens.get('refresh_token')
+        }
 
         return self.get_success_response(json_response=response)
 
 
 class TokenView(APIView, APIResponse):
     """Refresh a token"""
+
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
