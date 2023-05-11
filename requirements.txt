@@ -13,3 +13,4 @@ pyotp==2.6.0
 python-dateutil==2.8.2
 redis==3.5.3
 requests==2.25.1
+boto3==1.26.28

@@ -5,13 +5,20 @@ from client.views import access
 API_MODULE = 'access'
 
 urlpatterns = [
-    # path(f'{API_MODULE}/otp', access.OTPView.as_view(), name='otp'),
-    # path(f'{API_MODULE}/token', access.TokenView.as_view(), name='token'),
+    # Access views
     path(f'{API_MODULE}/login', access.LoginView.as_view(), name='login'),
     path(f'{API_MODULE}/logout', access.LogoutView.as_view(), name='logout'),
     path(f'{API_MODULE}/refresh_token', access.TokenView.as_view(), name='refresh_token'),
-    # Todo implement these
-    # path(f'{API_MODULE}/sign_up_admin', access.SignUpAdminView.as_view(), name='sign_up_admin'),
-    # path(f'{API_MODULE}/sign_up_user', access.SignUpUserView.as_view(), name='sign_up_user'),
-    # path(f'{API_MODULE}/forget_password', access.ForgetPasswordView.as_view(), name='forget_password')
+    path(f'{API_MODULE}/sign_up_admin', access.SignUpAdminView.as_view(), name='sign_up_admin'),
+    path(f'{API_MODULE}/sign_up_user', access.SignUpUserView.as_view(), name='sign_up_user'),
+    path(f'{API_MODULE}/forget_password', access.ForgetPasswordView.as_view(), name='forget_password')
+
+    # Admin views
+    path(f'{API_MODULE}/add_user', access.AddUserView.as_view(), name='add_user'),
+    path(f'{API_MODULE}/delete_user', access.DeleteUserView.as_view(), name='delete_user'),
+
+    # Profile views
+    path(f'{API_MODULE}/get_profile', access.GetProfileView.as_view(), name='get_profile'),
+    path(f'{API_MODULE}/edit_profile', access.EditProfileView.as_view(), name='edit_profile'),
+    path(f'{API_MODULE}/delete_account', access.DeleteAccountView.as_view(), name='delete_account'),
 ]
