@@ -6,24 +6,9 @@ from main.settings.env import AUTH_APPLICATION_NAME
 
 def exec_initial_data():
     '''Add initial data for development'''
-    
-    print('initial country: India (IN. +91)')
-    __add_update_country('India', 'IN', '91')
 
     print('initial auth app')
     __add_auth_application()
-
-
-def __add_update_country(name, country_code, dialing_code):
-
-    country, created = Country.objects.update_or_create(
-        name=name.strip(),
-        defaults={
-            'country_code': country_code.strip().upper(),
-            'dialing_code': dialing_code,
-        },
-    )
-    return country
 
 
 def __add_auth_application():
