@@ -1,3 +1,5 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 from . import env
 
 # other supported third party apps
@@ -53,3 +55,21 @@ if env.APP_ENV != 'dev':
     SESSION_COOKIE_SECURE = True
     # redirect all non-HTTPS to HTTPS
     SECURE_SSL_REDIRECT = True
+
+# sentry setup
+sentry_sdk.init(
+    environment=env.APP_ENV,
+    dsn="https://4eb5085ecee5497f9755f8e98cae9af4@o1055993.ingest.sentry.io/4505169887166464",
+    integrations=[
+        DjangoIntegration(),
+    ],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)

@@ -2,9 +2,15 @@ from django.urls import path
 
 from client.views import access
 
+from client.services import sentry_service
+
 API_MODULE = 'access'
 
+
 urlpatterns = [
+    # sentry testing path
+    path('/sentry-debug', sentry_service.trigger_error, name='sentry-debug'),
+    
     # Access views
     path(f'{API_MODULE}/login', access.LoginView.as_view(), name='login'),
     path(f'{API_MODULE}/logout', access.LogoutView.as_view(), name='logout'),
