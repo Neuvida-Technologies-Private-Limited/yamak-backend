@@ -22,5 +22,5 @@ urlpatterns = [
 
     # Profile views
     path(f'{API_MODULE}/get_profile', access.GetProfileView.as_view(), name='get_profile'),
-    path(f'{API_MODULE}/edit_profile', access.EditProfileView.as_view(), name='edit_profile'),
+    path(f'{API_MODULE}/update_profile', access.UpdateProfileView.as_view(), name='edit_profile'),
 ]

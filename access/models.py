@@ -22,7 +22,8 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     user_type =  models.CharField(
         choices=UserType.choices,
         max_length=18,
-        default=UserType.ADMIN
+        default=UserType.ADMIN,
+        blank=False
     )
     objects = UserManager()
 

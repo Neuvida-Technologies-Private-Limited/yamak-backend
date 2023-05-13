@@ -13,6 +13,7 @@ from main.mixins.exceptions import UnAuthorizedError
 from main.mixins.views import APIResponse
 
 from access.models import User
+from access.constants import UserType
 
 class LoginView(APIView, APIResponse):
     """Generate and verifying token for consumer via password"""
@@ -25,7 +26,7 @@ class LoginView(APIView, APIResponse):
             raise BadRequestError(message='invalid email')
 
         password = payload.get('password', None)
-        if not password or validations.is_valid_password(password):
+        if validations.is_valid_password(password):
             raise BadRequestError(message='invalid password')
 
         user = profile_service.get_user_email(email=email)
@@ -118,7 +119,8 @@ class SignUpView(APIView, APIResponse):
                 raise BadRequestError('user already exists')
             
             password = payload.get('password', None)
-            if not password or validations.is_valid_password(password):
+
+            if not validations.is_valid_password(password):
                 raise BadRequestError(message='invalid password')
 
             first_name = payload.get('first_name', None)
@@ -129,8 +131,12 @@ class SignUpView(APIView, APIResponse):
             if not last_name:
                 raise BadRequestError(message='invalid last_name')
 
+            user_type = payload.get('user_type', None)
+            if not user_type or (user_type != UserType.ADMIN and user_type != UserType.USER):
+                raise BadRequestError('invalid user_type')
+
             # create user
-            user = profile_service.create_user(email, password, first_name, last_name)
+            user = profile_service.create_user(email, password, first_name, last_name, user_type)
 
             # Generate and send otp
             otp = access_util.generate_otp(
@@ -226,6 +232,7 @@ class AddUserView(APIView, APIResponse):
 
 class DeleteUserView(APIView, APIResponse):
     """Generate and verifying token for consumer via password"""
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
@@ -253,6 +260,7 @@ class DeleteUserView(APIView, APIResponse):
         }
 
         return self.get_success_response(json_response=response)
+
 
 class GetProfileView(APIView, APIResponse):
     """Get user profile"""
@@ -286,7 +294,7 @@ class GetProfileView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 
-class UpdateProfileEmailView(APIView, APIResponse):
+class UpdateProfileView(APIView, APIResponse):
     """Update the user info"""
     permission_classes = (IsAuthenticated,)
 

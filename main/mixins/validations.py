@@ -6,7 +6,7 @@ EMAIL_ADDRESS_PATTERN = re.compile(
 COLOR_CODE_PATTERN = re.compile('^(?:[0-9a-fA-F]{3}){2}$')
 
 # minimum eight characters, at least one letter, one number and one special character:
-PASSWORD_PATTERN = re.compile(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$')
+PASSWORD_PATTERN = re.compile('^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$')
 
 def is_valid_email(email: str) -> bool:
     return EMAIL_ADDRESS_PATTERN.match(email) is not None if email else False
