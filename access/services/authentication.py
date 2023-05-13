@@ -45,7 +45,7 @@ def create_otp(email: str) -> str:
 
 
 def get_otp(email: str, otp: str) -> OneTimePassword:
-    """Get OTP for a phone if not expired"""
+    """Get OTP if not expired"""
 
     otp_qs = OneTimePassword.objects.filter(
         email=email,

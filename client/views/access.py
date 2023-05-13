@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
+from django.forms.models import model_to_dict
 from oauth2_provider.models import AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+import json
 
 from access.constants import OTPRequestType
 from access.services import auth_service
@@ -26,10 +28,10 @@ class LoginView(APIView, APIResponse):
             raise BadRequestError(message='invalid email')
 
         password = payload.get('password', None)
-        if validations.is_valid_password(password):
+        if not validations.is_valid_password(password):
             raise BadRequestError(message='invalid password')
 
-        user = profile_service.get_user_email(email=email)
+        user = profile_service.get_user(email=email)
 
         if not user:
             raise BadRequestError('invalid user')
@@ -48,8 +50,6 @@ class LoginView(APIView, APIResponse):
 
 class TokenView(APIView, APIResponse):
     """Refresh a token"""
-
-    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
@@ -169,33 +169,59 @@ class SignUpView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 class ForgetPasswordView(APIView, APIResponse):
-    """Generate and verifying token for consumer via password"""
+    """Update the password of the user"""
 
     def post(self, request):
 
         payload: dict = request.data
         email = payload.get('email', None)
+
         if not validations.is_valid_email(email):
             raise BadRequestError(message='invalid email')
 
-        password = payload.get('password', None)
-        if not password or validations.is_valid_password(password):
-            raise BadRequestError(message='invalid password')
-
-        user = profile_service.get_user_email(email=email)
+        user = profile_service.get_user(email=email)
 
         if not user:
             raise BadRequestError('invalid user')
-        if not user.check_password(password):
-            raise BadRequestError('invalid password')
+        
+        request_type = payload.get('request_type', None)
+        if request_type == OTPRequestType.GENERATE:
 
-        tokens = auth_service.create_auth_tokens(user=user)
+            # Generate and send otp
+            otp = access_util.generate_otp(
+                email=email,
+            )
+            
+            access_util.send_otp(email=email, otp=otp)
+            
+            response = {
+                "otp_generated": True
+            }
 
-        response = {
-            'access_token': tokens.get('access_token'),
-            'refresh_token': tokens.get('refresh_token')
-        }
+        elif request_type == OTPRequestType.VERIFY:
+            otp = payload.get('otp', None)
 
+            if not otp:
+                raise BadRequestError('invalid otp')
+            
+            new_password = payload.get('new_password', None)
+            
+            if not validations.is_valid_password(new_password):
+                raise BadRequestError('invalid password')
+
+            access_util.verify_otp(
+                email=email,
+                otp=otp
+            )
+
+            profile_service.set_password(user, new_password)
+
+            response = {
+                "password_updated": True
+            }
+        else:
+            raise BadRequestError('invalid request type')
+            
         return self.get_success_response(json_response=response)
 
 
@@ -231,32 +257,19 @@ class AddUserView(APIView, APIResponse):
 
 
 class DeleteUserView(APIView, APIResponse):
-    """Generate and verifying token for consumer via password"""
+    "Delete a user"
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def delete(self, request):
 
-        payload: dict = request.data
-        email = payload.get('email', None)
-        if not validations.is_valid_email(email):
-            raise BadRequestError(message='invalid email')
-
-        password = payload.get('password', None)
-        if not password or validations.is_valid_password(password):
-            raise BadRequestError(message='invalid password')
-
-        user = profile_service.get_user_email(email=email)
-
+        user = request.user
         if not user:
             raise BadRequestError('invalid user')
-        if not user.check_password(password):
-            raise BadRequestError('invalid password')
 
-        tokens = auth_service.create_auth_tokens(user=user)
+        profile_service.delete_user(user)
 
         response = {
-            'access_token': tokens.get('access_token'),
-            'refresh_token': tokens.get('refresh_token')
+            "user_deleted": True
         }
 
         return self.get_success_response(json_response=response)
@@ -266,31 +279,10 @@ class GetProfileView(APIView, APIResponse):
     """Get user profile"""
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-
-        payload: dict = request.data
-        email = payload.get('email', None)
-        if not validations.is_valid_email(email):
-            raise BadRequestError(message='invalid email')
-
-        password = payload.get('password', None)
-        if not password or validations.is_valid_password(password):
-            raise BadRequestError(message='invalid password')
-
-        user = profile_service.get_user_email(email=email)
-
-        if not user:
-            raise BadRequestError('invalid user')
-        if not user.check_password(password):
-            raise BadRequestError('invalid password')
-
-        tokens = auth_service.create_auth_tokens(user=user)
-
-        response = {
-            'access_token': tokens.get('access_token'),
-            'refresh_token': tokens.get('refresh_token')
-        }
-
+    def get(self, request):
+        
+        response = profile_service.get_user_profile(request.user)
+        
         return self.get_success_response(json_response=response)
 
 
@@ -298,17 +290,11 @@ class UpdateProfileView(APIView, APIResponse):
     """Update the user info"""
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def put(self, request):
 
         payload: dict = request.data
 
-        email = payload.get('email', None)
-        if not validations.is_valid_email(email):
-            raise BadRequestError(message='invalid email')
-
-        user = profile_service.get_user(email)
-        if not user:
-            raise BadRequestError('invalid user')
+        user = request.user
 
         first_name = payload.get('first_name', None)
         if not first_name:
@@ -319,7 +305,7 @@ class UpdateProfileView(APIView, APIResponse):
             raise BadRequestError(message='invalid last_name')
 
         # update user
-        profile_service.update_user(email=email, first_name=first_name, last_name=last_name)
+        profile_service.update_user(email=user.email, first_name=first_name, last_name=last_name)
 
         response = {
             "profile_udpated": True

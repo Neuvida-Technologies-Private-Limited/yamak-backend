@@ -61,13 +61,13 @@ def verify_otp(email: str, otp: str) -> dict[str, str]:
             raise BadRequestError('incorrect otp')
 
     user = profile_service.get_user(email=email)
-   
+
     # update last login
     profile_service.update_last_login(user=user)
-    
+
     # generate tokens
     tokens = auth_service.create_auth_tokens(user=user)
-    
+
     if otp_entry:
         # expire OTP if exists
         auth_service.expire_otp(otp_entry=otp_entry)
