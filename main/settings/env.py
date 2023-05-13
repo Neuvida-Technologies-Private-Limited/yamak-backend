@@ -16,3 +16,7 @@ DATABASE_NAME = environ.get('DATABASE_NAME')
 OTP_SECRET = environ.get('OTP_SECRET')
 OTP_DISABLED = bool(int(environ.get('OTP_DISABLED', default='0').strip()))
 OTP_EXPIRY_IN_MIN = int(environ.get('OTP_EXPIRY_IN_MIN'))
+
+AWS_ACCESS_KEY_ID=environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY=environ.get('AWS_SECRET_ACCESS_KEY')
+REGION_NAME=environ.get('REGION_NAME')

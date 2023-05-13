@@ -2,33 +2,36 @@ from datetime import datetime
 
 from rest_framework.exceptions import ValidationError
 
-from access.models import Country
 from access.models import User
 from access.serializers import UserSerializer
 
+def get_user(email: str) -> User:
+    """Get an auth user"""
 
-def get_country(country_code: str) -> Country:
-
-    # querying as last because don't need to raise error on get
-    return Country.objects.filter(country_code=country_code).last()
-
-
-def get_user(phone: str) -> User:
-    """Get an auth user by phone"""
-
-    user_qs = User.objects.filter(phone=phone)
+    user_qs = User.objects.filter(email=email)
     if not user_qs.exists():
         return None
 
     return user_qs.last()
 
+        
+def update_user(email: str, first_name: str, last_name: str) -> User:
+    """Get an auth user"""
 
-def create_user(country: Country, phone: str) -> User:
+    user_qs = User.objects.filter(email=email).update(first_name=first_name, last_name=last_name)
+    if not user_qs.exists():
+        return None
+
+    return user_qs.last()
+
+def create_user(email: str, password: str, first_name: str, last_name: str) -> User:
     """Create a new auth user"""
 
     user = {
-        'phone': phone,
-        'country': country.id,
+        'email': email,
+        'password': password,
+        'first_name': first_name,
+        'last_name': last_name
     }
     ser = UserSerializer(data=user)
     if not ser.is_valid():

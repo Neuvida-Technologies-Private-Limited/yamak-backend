@@ -1,6 +1,4 @@
 from oauth2_provider.models import Application
-
-from access.models import Country
 from main.settings.env import AUTH_APPLICATION_NAME
 
 

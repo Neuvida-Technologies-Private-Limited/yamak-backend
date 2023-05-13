@@ -16,13 +16,13 @@ from main.mixins.exceptions import UnexpectedRequestError
 from main.settings import env
 
 
-def create_otp(phone: str) -> str:
+def create_otp(email: str) -> str:
     """
     Using a package pyotp to generate one time password
     The password will be saved to OneTimePassword
     """
 
-    random_key = random.shuffle(list(phone))
+    random_key = random.shuffle(list(email))
     timestamp = datetime.now().timestamp()
     otp_secret = f'{random_key}-{timestamp}-{env.OTP_SECRET}'
     otp_secret = base64.b32encode(
@@ -34,7 +34,7 @@ def create_otp(phone: str) -> str:
     expires_at = datetime.now() + timedelta(minutes=env.OTP_EXPIRY_IN_MIN)
 
     OneTimePassword.objects.update_or_create(
-        phone=phone,
+        email=email,
         password=otp,
         defaults={
             'expires_at': expires_at,
@@ -44,11 +44,11 @@ def create_otp(phone: str) -> str:
     return otp
 
 
-def get_otp(phone: str, otp: str) -> OneTimePassword:
+def get_otp(email: str, otp: str) -> OneTimePassword:
     """Get OTP for a phone if not expired"""
 
     otp_qs = OneTimePassword.objects.filter(
-        phone=phone,
+        email=email,
         password=otp,
         expires_at__gte=datetime.now(),
     )
@@ -104,3 +104,4 @@ def revoke_token(user_id: int, access_token: str):
     ).last()
     if r_token:
         r_token.revoke()
+
