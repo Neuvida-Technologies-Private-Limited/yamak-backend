@@ -2,6 +2,10 @@
 
 # Important commands
 
+# Steps to create virtual environment
+    * create a virtual environment ```python3 -m virtualenv venv```
+    * acivate a virtual environment ```source ./venv/bin/activate```
+
 # Backend server setup on ec2
 * SSH into the server 
     dev  ```ssh -i yamak-dev.pem ubuntu@<server-ip>```
