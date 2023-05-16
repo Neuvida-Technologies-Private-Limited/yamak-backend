@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 
 from access.models import User
 from access.serializers import UserSerializer
-from access.constants import UserType
+from access.constants import UserTypes
 
 def get_user(email: str) -> User:
     """Get an auth user"""

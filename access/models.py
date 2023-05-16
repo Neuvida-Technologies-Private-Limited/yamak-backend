@@ -3,13 +3,24 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from djutil.models import TimeStampedModel
 from access.managers import UserManager
-from access.constants import UserType
+from access.constants import UserTypes
+
+class UserType(TimeStampedModel):
+    """
+    Types of users.
+    """
+    user_type = models.CharField(
+        choices=UserTypes.choices,
+        max_length=18,
+        default=UserTypes.ADMIN,
+        blank=False
+    )
 
 class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     """
     All the users who will access the system.
     Auth level custom user.
-    An unique user is defined by an unique phone.
+    An unique user is defined by an unique email.
     Needs a custom User Manager.
     It will be used for system roles and access.
     """
@@ -19,12 +30,19 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
     first_name = models.CharField(max_length=60, default=None, blank=False)
     last_name = models.CharField(max_length=60, default=None, blank=False)
     is_validated = models.BooleanField(default=False)
-    user_type =  models.CharField(
-        choices=UserType.choices,
-        max_length=18,
-        default=UserType.ADMIN,
+    user_type =  models.ForeignKey(
+        to=UserType,
+        on_delete=models.PROTECT,
+        related_name='user_type_mapping',
         blank=False
     )
+    # models.CharField(
+    #     choices=UserType.choices,
+    #     max_length=18,
+    #     default=UserType.ADMIN,
+    #     blank=False
+    # )
+
     objects = UserManager()
 
     USERNAME_FIELD = 'id'
@@ -35,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
 
 class OneTimePassword(TimeStampedModel):
     """
-    OTP saved for a phone/email for authentication.
+    OTP saved for a email for authentication.
     """
     email = models.EmailField(max_length=254, blank=True)
     password = models.CharField(max_length=8)
@@ -52,3 +70,14 @@ class OneTimePassword(TimeStampedModel):
                 name='email_not_null'
             )
         ]
+
+# class Permissions(TimeStampedModel):
+#     """
+#     Permission for various type of users.
+#     """
+#     permission = models.CharField(
+#         choices=Permissions.choices,
+#         max_length=18,
+#         default=Permissions.ALL,
+#         blank=False
+#     )

@@ -2,10 +2,7 @@ from django.shortcuts import get_object_or_404
 from oauth2_provider.models import AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
-# from access.constants import OTPRequestType
-# from access.services import auth_service
-# from access.services import profile_service
+from workspace.services import workspace_service
 from client.utils import access_util
 from main.mixins import validations
 from main.mixins.exceptions import BadRequestError
@@ -13,49 +10,53 @@ from main.mixins.exceptions import UnAuthorizedError
 from main.mixins.views import APIResponse
 
 class CreateWorkspaceView(APIView, APIResponse):
-    """Refresh a token"""
+    """Create a workspace"""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
+        
+        name = payload.get('name', None)
+        if not name:
+            raise BadRequestError('invalid name')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        # get user
+        user = request.user
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        workspace_service.create_workspace(user, name)
+
+        response = {
+            "workspace_created": True
+        }
+
+        return self.get_success_response(json_response=response)
 
 
 class DeleteWorkspaceView(APIView, APIResponse):
-    """Refresh a token"""
+    """Delete a workspace"""
 
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
+        
+        id = payload.get('id', None)
+        if not id:
+            raise BadRequestError('invalid id')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        # get user
+        user = request.user
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        workspace_service.delete_workspace(user, id)
+
+        response = {
+            "workspace_created": True
+        }
+
+        return self.get_success_response(json_response=response)
 
 
 class EditWorkspaceView(APIView, APIResponse):
@@ -66,19 +67,21 @@ class EditWorkspaceView(APIView, APIResponse):
     def post(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
+        
+        id = payload.get('id', None)
+        if not id:
+            raise BadRequestError('invalid id')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        # get user
+        user = request.user
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        workspace_service.delete_workspace(user, id)
+
+        response = {
+            "workspace_created": True
+        }
+
+        return self.get_success_response(json_response=response)
 
 
 class GetWorkspaceView(APIView, APIResponse):

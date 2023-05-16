@@ -1,9 +1,8 @@
 from django.contrib.auth.base_user import BaseUserManager
-from access.constants import UserType
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, first_name, last_name, user_type = UserType.ADMIN):
+    def create_user(self, email, first_name, last_name, user_type):
 
         user = self.model(
             email=email.strip(),

@@ -5,7 +5,10 @@ class OTPRequestType:
     GENERATE = 'GENERATE'
     VERIFY = 'VERIFY'
 
-class UserType(models.TextChoices):
+class UserTypes(models.TextChoices):
 
     ADMIN = 'ADMIN'
     USER = 'USER'
+
+class Permissions(models.TextChoices):
+    ALL = 'ALL'

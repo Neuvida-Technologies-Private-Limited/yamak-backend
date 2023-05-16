@@ -15,7 +15,7 @@ from main.mixins.exceptions import UnAuthorizedError
 from main.mixins.views import APIResponse
 
 from access.models import User
-from access.constants import UserType
+from access.constants import UserTypes
 
 class LoginView(APIView, APIResponse):
     """Generate and verifying token for consumer via password"""
@@ -132,7 +132,7 @@ class SignUpView(APIView, APIResponse):
                 raise BadRequestError(message='invalid last_name')
 
             user_type = payload.get('user_type', None)
-            if not user_type or (user_type != UserType.ADMIN and user_type != UserType.USER):
+            if not user_type or (user_type != UserTypes.ADMIN and user_type != UserTypes.USER):
                 raise BadRequestError('invalid user_type')
 
             # create user
