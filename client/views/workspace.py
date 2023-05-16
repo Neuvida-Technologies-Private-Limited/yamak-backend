@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from oauth2_provider.models import AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from workspace.services import workspace_service
+from workspace.services import workspace_service, experiment_service
 from client.utils import access_util
 from main.mixins import validations
 from main.mixins.exceptions import BadRequestError
@@ -136,85 +136,84 @@ class CreateExperimentView(APIView, APIResponse):
     def post(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        workspace_id = payload.get('workspace_id', None)
+        if not workspace_id:
+            raise BadRequestError('invalid workspace_id')
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        name = payload.get('name', None)
+        if not name:
+            raise BadRequestError('invalid name')
 
+        # get user
+        user = request.user
 
-class GetExperimentInfoView(APIView, APIResponse):
-    """Refresh a token"""
+        experiment_service.create_experiment(user, workspace_id, name)
 
-    permission_classes = (IsAuthenticated,)
+        response = {
+            "experiment_created": True
+        }
 
-    def post(self, request):
-
-        payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
-
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
-
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        return self.get_success_response(json_response=response)
 
 
 class EditExperimentView(APIView, APIResponse):
-    """Refresh a token"""
+    """Edit an experiment"""
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def put(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
+        
+        experiment_id = payload.get('experiment_id', None)
+        if not experiment_id:
+            raise BadRequestError('invalid experiment_id')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        workspace_id = payload.get('workspace_id', None)
+        if not workspace_id:
+            raise BadRequestError('invalid workspace_id')
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        name = payload.get('name', None)
+        if not name:
+            raise BadRequestError('invalid name')
+
+        # get user
+        user = request.user
+
+        experiment_service.delete_experiment(user, workspace_id, experiment_id, name)
+
+        response = {
+            "experiment_edited": True
+        }
+
+        return self.get_success_response(json_response=response)
         
 
 class DeleteExperimentView(APIView, APIResponse):
-    """Refresh a token"""
+    """Delete an experiment"""
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def delete(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
+        
+        experiment_id = payload.get('experiment_id', None)
+        if not experiment_id:
+            raise BadRequestError('invalid experiment_id')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        workspace_id = payload.get('workspace_id', None)
+        if not workspace_id:
+            raise BadRequestError('invalid workspace_id')
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        # get user
+        user = request.user
+
+        experiment_service.delete_experiment(user, workspace_id, experiment_id)
+
+        response = {
+            "experiment_deleted": True
+        }
+
+        return self.get_success_response(json_response=response)

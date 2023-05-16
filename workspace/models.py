@@ -29,6 +29,12 @@ class Experiment(TimeStampedModel):
     """
 
     name = models.CharField(max_length=60, default=None, blank=False)
+    experiment_id = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+        blank=False
+    )
     workspace = models.ForeignKey(
         to=Workspace,
         on_delete=models.PROTECT,

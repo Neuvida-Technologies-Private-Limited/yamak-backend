@@ -14,7 +14,6 @@ urlpatterns = [
 
     # experiment endpoints
     path(f'{API_MODULE}/create_experiment', workspace.CreateExperimentView.as_view(), name='create_experiment'),
-    path(f'{API_MODULE}/get_experiment_info', workspace.GetExperimentInfoView.as_view(), name='get_experiment_info'),
     path(f'{API_MODULE}/edit_experiment', workspace.EditExperimentView.as_view(), name='edit_experiment'),
     path(f'{API_MODULE}/delete_experiment', workspace.DeleteExperimentView.as_view(), name='delete_experiment'),
 ]  
