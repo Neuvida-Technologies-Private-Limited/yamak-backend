@@ -132,7 +132,8 @@ class SignUpView(APIView, APIResponse):
                 raise BadRequestError(message='invalid last_name')
 
             user_type = payload.get('user_type', None)
-            if not user_type or (user_type != UserTypes.ADMIN and user_type != UserTypes.USER):
+            print('**** **** ****', profile_service.get_user_type(user_type))
+            if not user_type or profile_service.get_user_type(user_type):
                 raise BadRequestError('invalid user_type')
 
             # create user

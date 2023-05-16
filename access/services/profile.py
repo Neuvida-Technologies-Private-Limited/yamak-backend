@@ -2,7 +2,7 @@ from datetime import datetime
 
 from rest_framework.exceptions import ValidationError
 
-from access.models import User
+from access.models import User, UserType
 from access.serializers import UserSerializer
 from access.constants import UserTypes
 
@@ -39,12 +39,12 @@ def get_user_profile(user: User):
 
 def create_user(email: str, password: str, first_name: str, last_name: str, user_type) -> User:
     """Create a new auth user"""
-
+    print('**** get_user_type(user_type) ****', get_user_type(user_type))
     user = {
         'email': email,
         'first_name': first_name,
         'last_name': last_name,
-        'user_type': user_type
+        'user_type': get_user_type(user_type)
     }
     ser = UserSerializer(data=user)
 
@@ -67,3 +67,10 @@ def set_password(user: User, password: str):
 def update_last_login(user: User):
     user.last_login = datetime.today()
     user.save()
+
+def get_user_type(user_type: str):
+    """Check if user_type is correct"""
+
+    user_type = UserType.objects.filter(user_type=user_type).last()
+
+    return user_type

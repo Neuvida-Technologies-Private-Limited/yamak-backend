@@ -7,7 +7,7 @@ from oauth2_provider.models import Application
 from oauth2_provider.models import RefreshToken
 from pyotp import TOTP
 
-from access.models import OneTimePassword
+from access.models import OneTimePassword, UserType
 from access.models import User
 from access.utils import auth_util
 from main.mixins import errors
@@ -104,4 +104,3 @@ def revoke_token(user_id: int, access_token: str):
     ).last()
     if r_token:
         r_token.revoke()
-

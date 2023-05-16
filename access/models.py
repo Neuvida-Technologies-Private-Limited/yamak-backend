@@ -36,12 +36,6 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):
         related_name='user_type_mapping',
         blank=False
     )
-    # models.CharField(
-    #     choices=UserType.choices,
-    #     max_length=18,
-    #     default=UserType.ADMIN,
-    #     blank=False
-    # )
 
     objects = UserManager()
 
@@ -55,7 +49,7 @@ class OneTimePassword(TimeStampedModel):
     """
     OTP saved for a email for authentication.
     """
-    email = models.EmailField(max_length=254, blank=True)
+    email = models.EmailField(max_length=254, blank=False)
     password = models.CharField(max_length=8)
     expires_at = models.DateTimeField()
 
