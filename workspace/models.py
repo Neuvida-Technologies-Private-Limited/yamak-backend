@@ -13,7 +13,8 @@ class Workspace(TimeStampedModel):
     workspace_id = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
-        unique=True
+        unique=True,
+        blank=False
     )
     created_by = models.ForeignKey(
         to=User,

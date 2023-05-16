@@ -39,7 +39,7 @@ class DeleteWorkspaceView(APIView, APIResponse):
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def delete(self, request):
 
         payload: dict = request.data
         
@@ -53,7 +53,7 @@ class DeleteWorkspaceView(APIView, APIResponse):
         workspace_service.delete_workspace(user, id)
 
         response = {
-            "workspace_created": True
+            "workspace_deleted": True
         }
 
         return self.get_success_response(json_response=response)
@@ -64,7 +64,7 @@ class EditWorkspaceView(APIView, APIResponse):
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def put(self, request):
 
         payload: dict = request.data
         
@@ -72,10 +72,14 @@ class EditWorkspaceView(APIView, APIResponse):
         if not id:
             raise BadRequestError('invalid id')
 
+        name = payload.get('name', None)
+        if not name:
+            raise BadRequestError('invalid name')
+
         # get user
         user = request.user
 
-        workspace_service.delete_workspace(user, id)
+        workspace_service.edit_workspace(user, id, name)
 
         response = {
             "workspace_created": True
@@ -89,22 +93,16 @@ class GetWorkspaceView(APIView, APIResponse):
 
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def get(self, request):
 
         payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
 
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
+        # get user
+        user = request.user
 
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
+        response = workspace_service.get_workspace_info(user)
+
+        return self.get_success_response(json_response=response)
 
 
 class ShareWorkspaceView(APIView, APIResponse):

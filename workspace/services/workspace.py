@@ -12,13 +12,17 @@ def create_workspace(user: User, name: str) -> None:
 
     return
 
-def get_workspace(user: User) -> None:
+def get_workspace_info(user: User) -> None:
     """
     Create the workspace for the user
     """
 
     # get workspace
-    workspace_list = Workspace.objects.create(created_by=user).values()
+    workspace_list = list(Workspace.objects.filter(created_by=user).values('workspace_id', 'name', 'created_at', 'modified_at'))
+    print('****', workspace_list, '****')
+
+    # convert object to dict
+    # workspace_list = workspace_list.__dict__
 
     return workspace_list
 
