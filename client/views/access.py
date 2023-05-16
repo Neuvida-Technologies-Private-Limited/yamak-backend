@@ -132,17 +132,19 @@ class SignUpView(APIView, APIResponse):
                 raise BadRequestError(message='invalid last_name')
 
             user_type = payload.get('user_type', None)
-            print('**** **** ****', profile_service.get_user_type(user_type))
-            if not user_type or profile_service.get_user_type(user_type):
+   
+            if not user_type or not profile_service.get_user_type(user_type):
                 raise BadRequestError('invalid user_type')
 
             # create user
             user = profile_service.create_user(email, password, first_name, last_name, user_type)
 
-            # Generate and send otp
+            # generate otp
             otp = access_util.generate_otp(
                 email=email,
             )
+
+            # send otp
             access_util.send_otp(email=email, otp=otp)
 
             response = {

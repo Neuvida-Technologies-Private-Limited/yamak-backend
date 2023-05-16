@@ -39,12 +39,12 @@ def get_user_profile(user: User):
 
 def create_user(email: str, password: str, first_name: str, last_name: str, user_type) -> User:
     """Create a new auth user"""
-    print('**** get_user_type(user_type) ****', get_user_type(user_type))
+    print('**** **** **** ****', get_user_type_id(user_type))
     user = {
         'email': email,
         'first_name': first_name,
         'last_name': last_name,
-        'user_type': get_user_type(user_type)
+        'user_type': get_user_type_id(user_type)
     }
     ser = UserSerializer(data=user)
 
@@ -74,3 +74,13 @@ def get_user_type(user_type: str):
     user_type = UserType.objects.filter(user_type=user_type).last()
 
     return user_type
+
+def get_user_type_id(user_type: str):
+    """Check if user_type is correct"""
+
+    user_type = UserType.objects.filter(user_type=user_type).last()
+
+    # convert to dict
+    user_type = user_type.__dict__
+
+    return user_type['id']
