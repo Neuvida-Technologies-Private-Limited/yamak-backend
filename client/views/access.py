@@ -33,7 +33,7 @@ class LoginView(APIView, APIResponse):
 
         user = profile_service.get_user(email=email)
 
-        if not user:
+        if not user or not user.is_validated:
             raise BadRequestError('invalid user')
         if not user.check_password(password):
             raise BadRequestError('invalid password')
