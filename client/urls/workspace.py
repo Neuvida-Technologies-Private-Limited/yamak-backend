@@ -10,7 +10,6 @@ urlpatterns = [
     path(f'{API_MODULE}/delete_workspace', workspace.DeleteWorkspaceView.as_view(), name='delete_workspace'),
     path(f'{API_MODULE}/edit_workspace', workspace.EditWorkspaceView.as_view(), name='edit_workspace'),
     path(f'{API_MODULE}/get_workspace_info', workspace.GetWorkspaceView.as_view(), name='get_workspace_info'),
-    path(f'{API_MODULE}/share_workspace', workspace.ShareWorkspaceView.as_view(), name='share_workspace'),
 
     # experiment endpoints
     path(f'{API_MODULE}/create_experiment', workspace.CreateExperimentView.as_view(), name='create_experiment'),

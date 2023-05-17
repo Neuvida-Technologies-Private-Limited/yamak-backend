@@ -38,11 +38,11 @@ def edit_experiment(user: User, workspace_id: str, experiment_id: str, name: str
         raise UnAuthorizedError('invalid experiment_id')
     
     # delete experiment
-    experiment.delete()
+    experiment.update(name=name)
 
     return
 
-def delete_experiment(user: User, workspace_id: str, experiment_id: str, name: str) -> None:
+def delete_experiment(user: User, workspace_id: str, experiment_id: str) -> None:
     """
     Create the experiment in the workspace
     """
@@ -63,7 +63,7 @@ def delete_experiment(user: User, workspace_id: str, experiment_id: str, name: s
         raise UnAuthorizedError('invalid experiment_id')
     
     # update experiment
-    experiment.update(name=name)
+    experiment.delete()
 
     return
 

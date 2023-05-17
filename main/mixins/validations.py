@@ -1,4 +1,5 @@
 import re
+import uuid
 
 EMAIL_ADDRESS_PATTERN = re.compile(
     r'^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$',
@@ -13,3 +14,12 @@ def is_valid_email(email: str) -> bool:
 
 def is_valid_password(password: str) -> bool:
     return PASSWORD_PATTERN.match(password) is not None if password else False
+
+def is_valid_uuid(value):
+    try:
+        # check uuid validity
+        uuid.UUID(str(value))
+
+        return True
+    except ValueError:
+        return False

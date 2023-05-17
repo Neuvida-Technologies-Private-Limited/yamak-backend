@@ -1,5 +1,5 @@
 from access.models import User
-from workspace.models import Workspace
+from workspace.models import Workspace, Experiment
 from main.mixins.exceptions import UnAuthorizedError
 
 def create_workspace(user: User, name: str) -> None:
@@ -45,10 +45,18 @@ def delete_workspace(user: User, id: str) -> None:
     """
 
     # create workspace
-    workspace = Workspace.objects.filter(workspace_id=id, created_by=user)
+    workspace = Workspace.objects.filter(workspace_id=id, created_by=user).last()
 
     if not workspace:
         raise UnAuthorizedError('invalid user/workspace')
+
+    # workspace pk
+    workspace_pk = workspace.__dict__['id']
+    
+    experiment = Experiment.objects.filter(workspace_id=workspace_pk)
+
+    # delete experiment
+    experiment.delete()
 
     # delete workspace
     workspace.delete()

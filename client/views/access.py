@@ -55,11 +55,11 @@ class TokenView(APIView, APIResponse):
 
         payload: dict = request.data
         refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
+        if not refresh_token or not refresh_token.strip():
             raise UnAuthorizedError(message='invalid refresh token')
 
         access_token = payload.get('access_token', None)
-        if not access_token:
+        if not access_token or not access_token.strip():
             raise UnAuthorizedError(message='invalid access token')
 
         auth_tokens = auth_service.refresh_new_token(
@@ -140,11 +140,11 @@ class SignUpView(APIView, APIResponse):
                     raise BadRequestError(message='invalid password')
 
                 first_name = payload.get('first_name', None)
-                if not first_name:
+                if not first_name or not first_name.strip():
                     raise BadRequestError(message='invalid first_name')
 
                 last_name = payload.get('last_name', None)
-                if not last_name:
+                if not last_name or not last_name.strip():
                     raise BadRequestError(message='invalid last_name')
 
                 user_type = payload.get('user_type', None)
@@ -220,7 +220,7 @@ class ForgetPasswordView(APIView, APIResponse):
         elif request_type == OTPRequestType.VERIFY:
             otp = payload.get('otp', None)
 
-            if not otp:
+            if not otp or not otp.strip():
                 raise BadRequestError('invalid otp')
             
             new_password = payload.get('new_password', None)
@@ -316,11 +316,11 @@ class UpdateProfileView(APIView, APIResponse):
         user = request.user
 
         first_name = payload.get('first_name', None)
-        if not first_name:
+        if not first_name or not first_name.strip():
             raise BadRequestError(message='invalid first_name')
         
         last_name = payload.get('last_name', None)
-        if not last_name:
+        if not last_name or not last_name.strip():
             raise BadRequestError(message='invalid last_name')
 
         # update user

@@ -19,7 +19,7 @@ class CreateWorkspaceView(APIView, APIResponse):
         payload: dict = request.data
         
         name = payload.get('name', None)
-        if not name:
+        if not name or not name.strip():
             raise BadRequestError('invalid name')
 
         # get user
@@ -43,14 +43,14 @@ class DeleteWorkspaceView(APIView, APIResponse):
 
         payload: dict = request.data
         
-        id = payload.get('id', None)
-        if not id:
-            raise BadRequestError('invalid id')
+        workspace_id = payload.get('id', None)
+        if not validations.is_valid_uuid(workspace_id):
+            raise BadRequestError('invalid workspace_id')
 
         # get user
         user = request.user
 
-        workspace_service.delete_workspace(user, id)
+        workspace_service.delete_workspace(user, workspace_id)
 
         response = {
             "workspace_deleted": True
@@ -69,11 +69,11 @@ class EditWorkspaceView(APIView, APIResponse):
         payload: dict = request.data
         
         id = payload.get('id', None)
-        if not id:
+        if not validations.is_valid_uuid(id):
             raise BadRequestError('invalid id')
 
         name = payload.get('name', None)
-        if not name:
+        if not name or not name.strip():
             raise BadRequestError('invalid name')
 
         # get user
@@ -82,7 +82,7 @@ class EditWorkspaceView(APIView, APIResponse):
         workspace_service.edit_workspace(user, id, name)
 
         response = {
-            "workspace_created": True
+            "workspace_edited": True
         }
 
         return self.get_success_response(json_response=response)
@@ -105,29 +105,6 @@ class GetWorkspaceView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 
-class ShareWorkspaceView(APIView, APIResponse):
-    """Refresh a token"""
-
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-
-        payload: dict = request.data
-        refresh_token = payload.get('refresh_token', None)
-        if not refresh_token:
-            raise UnAuthorizedError(message='invalid refresh token')
-
-        access_token = payload.get('access_token', None)
-        if not access_token:
-            raise UnAuthorizedError(message='invalid access token')
-
-        auth_tokens = auth_service.refresh_new_token(
-            refresh_token=refresh_token,
-            access_token=access_token,
-        )
-        return self.get_success_response(json_response=auth_tokens)
-
-
 class CreateExperimentView(APIView, APIResponse):
     """Refresh a token"""
 
@@ -138,11 +115,11 @@ class CreateExperimentView(APIView, APIResponse):
         payload: dict = request.data
 
         workspace_id = payload.get('workspace_id', None)
-        if not workspace_id:
+        if not validations.is_valid_uuid(workspace_id):
             raise BadRequestError('invalid workspace_id')
 
         name = payload.get('name', None)
-        if not name:
+        if not name or not name.strip():
             raise BadRequestError('invalid name')
 
         # get user
@@ -175,13 +152,13 @@ class EditExperimentView(APIView, APIResponse):
             raise BadRequestError('invalid workspace_id')
 
         name = payload.get('name', None)
-        if not name:
+        if not name or not name.strip():
             raise BadRequestError('invalid name')
 
         # get user
         user = request.user
 
-        experiment_service.delete_experiment(user, workspace_id, experiment_id, name)
+        experiment_service.edit_experiment(user, workspace_id, experiment_id, name)
 
         response = {
             "experiment_edited": True
