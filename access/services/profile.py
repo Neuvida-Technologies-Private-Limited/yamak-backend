@@ -24,28 +24,36 @@ def update_user(email: str, first_name: str, last_name: str) -> User:
     """Update an auth user"""
 
     User.objects.filter(email=email).update(first_name=first_name, last_name=last_name)
-    return 
+    return
 
 def get_user_profile(user: User):
+
+    # user_type id
+    user_type_id = user.__dict__['user_type_id']
+
+    # User Type object
+    user_type = UserType.objects.filter(id=user_type_id).last()
+
     # collect profile details
     profile_details = {
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
-        'user_type': user.user_type
+        'user_type': user_type.__dict__['user_type']
     }
 
     return profile_details
 
 def create_user(email: str, password: str, first_name: str, last_name: str, user_type) -> User:
     """Create a new auth user"""
-    print('**** **** **** ****', get_user_type_id(user_type))
+
     user = {
         'email': email,
         'first_name': first_name,
         'last_name': last_name,
         'user_type': get_user_type_id(user_type)
     }
+
     ser = UserSerializer(data=user)
 
     if not ser.is_valid():

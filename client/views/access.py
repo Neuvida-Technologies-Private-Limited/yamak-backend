@@ -114,42 +114,58 @@ class SignUpView(APIView, APIResponse):
 
             user = profile_service.get_user(email=email)
             
-            # raise error if user already exists
-            if user:
+            # raise error for validated user
+            if user and user.is_validated:
                 raise BadRequestError('user already exists')
             
-            password = payload.get('password', None)
+            # send otp for non validated user
+            elif user and not user.is_validated:
+                # generate otp
+                otp = access_util.generate_otp(
+                    email=email,
+                )
 
-            if not validations.is_valid_password(password):
-                raise BadRequestError(message='invalid password')
+                # send otp
+                access_util.send_otp(email=email, otp=otp)
 
-            first_name = payload.get('first_name', None)
-            if not first_name:
-                raise BadRequestError(message='invalid first_name')
+                response = {
+                    "otp_generated": True
+                }
 
-            last_name = payload.get('last_name', None)
-            if not last_name:
-                raise BadRequestError(message='invalid last_name')
+            # create a new user    
+            else:    
+                password = payload.get('password', None)
 
-            user_type = payload.get('user_type', None)
-   
-            if not user_type or not profile_service.get_user_type(user_type):
-                raise BadRequestError('invalid user_type')
+                if not validations.is_valid_password(password):
+                    raise BadRequestError(message='invalid password')
 
-            # create user
-            user = profile_service.create_user(email, password, first_name, last_name, user_type)
+                first_name = payload.get('first_name', None)
+                if not first_name:
+                    raise BadRequestError(message='invalid first_name')
 
-            # generate otp
-            otp = access_util.generate_otp(
-                email=email,
-            )
+                last_name = payload.get('last_name', None)
+                if not last_name:
+                    raise BadRequestError(message='invalid last_name')
 
-            # send otp
-            access_util.send_otp(email=email, otp=otp)
+                user_type = payload.get('user_type', None)
+    
+                if not user_type or not profile_service.get_user_type(user_type):
+                    raise BadRequestError('invalid user_type')
 
-            response = {
-                "otp_generated": True
-            }
+                # create user
+                user = profile_service.create_user(email, password, first_name, last_name, user_type)
+
+                # generate otp
+                otp = access_util.generate_otp(
+                    email=email,
+                )
+
+                # send otp
+                access_util.send_otp(email=email, otp=otp)
+
+                response = {
+                    "otp_generated": True
+                }
 
         elif request_type == OTPRequestType.VERIFY:
 
