@@ -16,6 +16,7 @@ OTHER_TP_APPS = [
 # projects apps to be added to installed apps
 PROJECTS_APPS = [
     'access',
+    'connector',
     'workspace'
 ]
 

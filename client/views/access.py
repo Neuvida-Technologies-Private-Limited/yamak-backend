@@ -294,6 +294,19 @@ class DeleteUserView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 
+class VerifyUserView(APIView, APIResponse):
+    "Verify a user"
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        response = {
+            "user_verified": True
+        }
+
+        return self.get_success_response(json_response=response)
+
+
 class GetProfileView(APIView, APIResponse):
     """Get user profile"""
     permission_classes = (IsAuthenticated,)

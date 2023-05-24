@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Admin views
     path(f'{API_MODULE}/delete_user', access.DeleteUserView.as_view(), name='delete_user'),
+    path(f'{API_MODULE}/verify_user', access.VerifyUserView.as_view(), name='verify_user'),
 
     # Profile views
     path(f'{API_MODULE}/get_profile', access.GetProfileView.as_view(), name='get_profile'),
