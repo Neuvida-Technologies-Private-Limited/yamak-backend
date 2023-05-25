@@ -270,7 +270,7 @@ class VerifyUserView(APIView, APIResponse):
     def get(self, request):
 
         user = request.user
-        print('*** this is user ***', user, profile_service.get_user_profile(request.user))
+        print('*** this is user ***', user, type(user))
         if(not user):
             response = {
                 "user_verified": False
