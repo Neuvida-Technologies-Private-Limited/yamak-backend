@@ -270,10 +270,10 @@ class VerifyUserView(APIView, APIResponse):
     def get(self, request):
 
         user = request.user
-
+        print('*** this is user ***', user)
         if(not user):
             response = {
-                "user_verified": false
+                "user_verified": False
             }
         else:
             response = {
