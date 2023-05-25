@@ -187,6 +187,7 @@ class SignUpView(APIView, APIResponse):
 
         return self.get_success_response(json_response=response)
 
+
 class ForgetPasswordView(APIView, APIResponse):
     """Update the password of the user"""
 
@@ -244,37 +245,6 @@ class ForgetPasswordView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 
-class AddUserView(APIView, APIResponse):
-    """Generate and verifying token for consumer via password"""
-
-    def post(self, request):
-
-        payload: dict = request.data
-        email = payload.get('email', None)
-        if not validations.is_valid_email(email):
-            raise BadRequestError(message='invalid email')
-
-        password = payload.get('password', None)
-        if not password or validations.is_valid_password(password):
-            raise BadRequestError(message='invalid password')
-
-        user = profile_service.get_user_email(email=email)
-
-        if not user:
-            raise BadRequestError('invalid user')
-        if not user.check_password(password):
-            raise BadRequestError('invalid password')
-
-        tokens = auth_service.create_auth_tokens(user=user)
-
-        response = {
-            'access_token': tokens.get('access_token'),
-            'refresh_token': tokens.get('refresh_token')
-        }
-
-        return self.get_success_response(json_response=response)
-
-
 class DeleteUserView(APIView, APIResponse):
     "Delete a user"
     permission_classes = (IsAuthenticated,)
@@ -296,13 +266,19 @@ class DeleteUserView(APIView, APIResponse):
 
 class VerifyUserView(APIView, APIResponse):
     "Verify a user"
-    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
 
-        response = {
-            "user_verified": True
-        }
+        user = request.user
+
+        if(not user):
+            response = {
+                "user_verified": false
+            }
+        else:
+            response = {
+                "user_verified": True
+            }
 
         return self.get_success_response(json_response=response)
 
