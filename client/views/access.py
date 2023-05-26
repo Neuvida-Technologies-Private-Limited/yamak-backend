@@ -266,9 +266,10 @@ class DeleteUserView(APIView, APIResponse):
 
 class VerifyUserView(APIView, APIResponse):
     "Verify a user"
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        print('****profile_service.get_user_profile(request.user)', profile_service.get_user_profile(request.user))
+
         response = {
             "user_verified": True
         }
