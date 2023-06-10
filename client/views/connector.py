@@ -18,8 +18,6 @@ class UploadDataS3View(APIView, APIResponse):
         user = request.user
         request_data = request.POST.dict()
         file_name = login_data.get("file_name")
-        print('**** request_data ****', request_data)
-        print('**** file_name ****'. file_name)
 
         response = {
             "file_uploaded": True
