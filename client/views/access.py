@@ -15,7 +15,7 @@ from main.mixins.exceptions import UnAuthorizedError
 from main.mixins.views import APIResponse
 
 from access.models import User
-from access.constants import UserTypes
+
 
 class LoginView(APIView, APIResponse):
     """Generate and verifying token for consumer via password"""

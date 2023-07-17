@@ -17,7 +17,8 @@ OTHER_TP_APPS = [
 PROJECTS_APPS = [
     'access',
     'connector',
-    'workspace'
+    'workspace',
+    'ai_models'
 ]
 
 # setup rest framework configs
@@ -36,6 +37,11 @@ REST_FRAMEWORK = {
 
     # for pagination size
     'PAGE_SIZE': 15,
+}
+
+HUGGINGFACE_API_SETTINGS = {
+    'API_URL': env.HUGGINGFACE_URL,
+    'API_SECRET': env.HUGGINGFACE_SECRET
 }
 
 OAUTH2_PROVIDER = {
