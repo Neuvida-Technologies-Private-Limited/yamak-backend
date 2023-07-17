@@ -83,6 +83,23 @@ def get_user_type():
 
     return user_type
 
+def get_user_type(user_type_id: str):
+    """Check if user_type is correct"""
+
+    user_type = list(UserType.objects.filter(id=user_type_id).values('user_type'))
+
+    return user_type[0]
+
+def check_user_type(user_type: str):
+    """Check if user_type is correct"""
+    user_types = get_user_type()
+
+    for value in user_types:
+        if value.get('user_type') == user_type:
+            return True
+
+    return False
+
 def get_user_type_id(user_type: str):
     """Check if user_type is correct"""
 

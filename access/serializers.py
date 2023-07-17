@@ -5,7 +5,6 @@ from main.mixins import errors
 from main.mixins.exceptions import BadRequestError
 # from main.mixins.validations import is_valid_phone
 
-
 class UserSerializer(ModelSerializer):
 
     class Meta:

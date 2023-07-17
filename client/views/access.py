@@ -32,6 +32,7 @@ class LoginView(APIView, APIResponse):
             raise BadRequestError(message='invalid password')
 
         user = profile_service.get_user(email=email)
+        user_type = profile_service.get_user_type(user.__dict__.get('user_type_id'))
 
         if not user or not user.is_validated:
             raise BadRequestError('invalid user')
@@ -42,7 +43,8 @@ class LoginView(APIView, APIResponse):
 
         response = {
             'access_token': tokens.get('access_token'),
-            'refresh_token': tokens.get('refresh_token')
+            'refresh_token': tokens.get('refresh_token'),
+            'user_type': user_type.get('user_type')
         }
 
         return self.get_success_response(json_response=response)
@@ -132,7 +134,7 @@ class SignUpView(APIView, APIResponse):
                     "otp_generated": True
                 }
 
-            # create a new user    
+            # create a new user
             else:    
                 password = payload.get('password', None)
 
@@ -149,7 +151,7 @@ class SignUpView(APIView, APIResponse):
 
                 user_type = payload.get('user_type', None)
     
-                if not user_type or not profile_service.get_user_type(user_type):
+                if not user_type or not profile_service.check_user_type(user_type):
                     raise BadRequestError('invalid user_type')
 
                 # create user
