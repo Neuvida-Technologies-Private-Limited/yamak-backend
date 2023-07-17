@@ -6,19 +6,14 @@ from . import env
 OTHER_TP_APPS = [
     # oauth support
     'oauth2_provider',
-
     # other extensions (e.g. shell_plus, generating model visualizations)
     'django_extensions',
-
     'django_filters',
 ]
 
 # projects apps to be added to installed apps
 PROJECTS_APPS = [
     'access',
-    'connector',
-    'workspace',
-    'ai_models'
 ]
 
 # setup rest framework configs

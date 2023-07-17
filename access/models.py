@@ -12,8 +12,8 @@ class UserType(TimeStampedModel):
     user_type = models.CharField(
         choices=UserTypes.choices,
         max_length=18,
-        default=UserTypes.ADMIN,
-        blank=False
+        blank=False,
+        null=False
     )
 
 class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel):

@@ -245,21 +245,12 @@ class ForgetPasswordView(APIView, APIResponse):
         return self.get_success_response(json_response=response)
 
 
-class DeleteUserView(APIView, APIResponse):
-    "Delete a user"
-    permission_classes = (IsAuthenticated,)
+class GetUserRolesView(APIView, APIResponse):
+    "Get all user roles"
 
-    def delete(self, request):
-
-        user = request.user
-        if not user:
-            raise BadRequestError('invalid user')
-
-        profile_service.delete_user(user)
-
-        response = {
-            "user_deleted": True
-        }
+    def get(self, request):
+        user_type_list = profile_service.get_user_type()
+        response = user_type_list
 
         return self.get_success_response(json_response=response)
 
@@ -276,41 +267,3 @@ class VerifyUserView(APIView, APIResponse):
 
         return self.get_success_response(json_response=response)
 
-
-class GetProfileView(APIView, APIResponse):
-    """Get user profile"""
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        
-        response = profile_service.get_user_profile(request.user)
-        
-        return self.get_success_response(json_response=response)
-
-
-class UpdateProfileView(APIView, APIResponse):
-    """Update the user info"""
-    permission_classes = (IsAuthenticated,)
-
-    def put(self, request):
-
-        payload: dict = request.data
-
-        user = request.user
-
-        first_name = payload.get('first_name', None)
-        if not first_name or not first_name.strip():
-            raise BadRequestError(message='invalid first_name')
-        
-        last_name = payload.get('last_name', None)
-        if not last_name or not last_name.strip():
-            raise BadRequestError(message='invalid last_name')
-
-        # update user
-        profile_service.update_user(email=user.email, first_name=first_name, last_name=last_name)
-
-        response = {
-            "profile_udpated": True
-        }
-
-        return self.get_success_response(json_response=response)

@@ -76,10 +76,10 @@ def update_last_login(user: User):
     user.last_login = datetime.today()
     user.save()
 
-def get_user_type(user_type: str):
+def get_user_type():
     """Check if user_type is correct"""
 
-    user_type = UserType.objects.filter(user_type=user_type).last()
+    user_type = list(UserType.objects.all().values('user_type'))
 
     return user_type
 

@@ -15,13 +15,16 @@ urlpatterns = [
     path(f'{API_MODULE}/logout', access.LogoutView.as_view(), name='logout'),
     path(f'{API_MODULE}/refresh_token', access.TokenView.as_view(), name='refresh_token'),
     path(f'{API_MODULE}/sign_up', access.SignUpView.as_view(), name='sign_up_admin'),
-    path(f'{API_MODULE}/forget_password', access.ForgetPasswordView.as_view(), name='forget_password'),
+    path(f'{API_MODULE}/get_user_roles', access.GetUserRolesView.as_view(), name='get_user_roles'),
+    # path(f'{API_MODULE}/forget_password', access.ForgetPasswordView.as_view(), name='forget_password'),
 
     # Admin views
-    path(f'{API_MODULE}/delete_user', access.DeleteUserView.as_view(), name='delete_user'),
-    path(f'{API_MODULE}/verify_user', access.VerifyUserView.as_view(), name='verify_user'),
+    # Uncomment later
+    # path(f'{API_MODULE}/delete_user', access.DeleteUserView.as_view(), name='delete_user'),
+    # path(f'{API_MODULE}/verify_user', access.VerifyUserView.as_view(), name='verify_user'),
 
     # Profile views
-    path(f'{API_MODULE}/get_profile', access.GetProfileView.as_view(), name='get_profile'),
-    path(f'{API_MODULE}/update_profile', access.UpdateProfileView.as_view(), name='edit_profile'),
+    # Uncomment later
+    # path(f'{API_MODULE}/get_profile', access.GetProfileView.as_view(), name='get_profile'),
+    # path(f'{API_MODULE}/update_profile', access.UpdateProfileView.as_view(), name='edit_profile'),
 ]

@@ -7,8 +7,9 @@ class OTPRequestType:
 
 class UserTypes(models.TextChoices):
 
-    ADMIN = 'ADMIN'
-    USER = 'USER'
+    USER911 = 'USER911'
+    FIREFIGHTER = 'FIREFIGHTER'
+    DISPATCH_CENTER = 'DISPATCH_CENTER'
 
 class Permissions(models.TextChoices):
     ALL = 'ALL'
