@@ -38,7 +38,7 @@ class LoginView(APIView, APIResponse):
         if not user.check_password(password):
             raise BadRequestError('invalid password')
 
-        user_type = profile_service.get_user_type(user.__dict__.get('user_type_id'))
+        user_type = profile_service.get_user_type_by_id(user.__dict__.get('user_type_id'))
 
         tokens = auth_service.create_auth_tokens(user=user)
 
