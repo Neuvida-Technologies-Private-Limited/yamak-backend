@@ -16,6 +16,7 @@ urlpatterns = [
     path(f'{API_MODULE}/refresh_token', access.TokenView.as_view(), name='refresh_token'),
     path(f'{API_MODULE}/sign_up', access.SignUpView.as_view(), name='sign_up_admin'),
     path(f'{API_MODULE}/get_user_roles', access.GetUserRolesView.as_view(), name='get_user_roles'),
+    path(f'{API_MODULE}/get_profile_details', access.GetProfileDetailsView.as_view(), name='get_profile_details'),
     # path(f'{API_MODULE}/forget_password', access.ForgetPasswordView.as_view(), name='forget_password'),
 
     # Admin views

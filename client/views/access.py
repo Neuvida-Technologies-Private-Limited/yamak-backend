@@ -97,6 +97,22 @@ class LogoutView(APIView, APIResponse):
 
         return self.get_success_response(json_response={'logged_out': True})
 
+
+class GetProfileDetailsView(APIView, APIResponse):
+    """logout/revoke tokens"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        user = request.user
+
+        profile_details = profile_service.get_user_profile(user)
+
+        print('****', profile_details, '****', type(profile_details))
+
+        return self.get_success_response(json_response=profile_details)
+
 class SignUpView(APIView, APIResponse):
     """Add user vis generating and verifying otp"""
 
