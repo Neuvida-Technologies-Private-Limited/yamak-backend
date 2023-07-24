@@ -32,7 +32,7 @@ def get_ticket_history(user: User) -> list:
                 image_data = base64.b64encode(image_file.read()).decode('utf-8')
             
             ticket[index]["user_image"] = image_data
-
+            # Todo: Add exception handling here
     if not ticket:
         Exception("Couldn't create ticket")
     
