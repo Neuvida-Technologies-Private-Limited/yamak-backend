@@ -17,5 +17,6 @@ class Ticket(TimeStampedModel):
     report = models.CharField(max_length=100, default=None, blank=False)
     location = models.CharField(max_length=100, default=None, blank=False)
     # Add image in the tickets too
-    # image
+    user_image = models.ImageField(upload_to='images') 
+    
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)

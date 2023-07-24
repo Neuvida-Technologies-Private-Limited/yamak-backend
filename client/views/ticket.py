@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from access.services import auth_service
 from main.mixins.views import APIResponse
 from ticket.services import ticket_service
-
+from main.mixins.exceptions import BadRequestError
 
 class CreateTicketView(APIView, APIResponse):
     """Create ticket for user"""
@@ -11,7 +11,6 @@ class CreateTicketView(APIView, APIResponse):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        
         payload: dict = request.data
 
         user = request.user
@@ -24,10 +23,15 @@ class CreateTicketView(APIView, APIResponse):
         if not location:
             raise BadRequestError(message='invalid request type')
 
+        user_image = payload.get('image', None)
+        print(
+            '****', user_image, type(user_image)
+        )
         ticket_service.create_ticket(
             report=report,
             location=location,
-            user=user
+            user=user,
+            user_image=user_image
         )
 
         return self.get_success_response(json_response={'ticket_created': True})
