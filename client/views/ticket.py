@@ -24,9 +24,7 @@ class CreateTicketView(APIView, APIResponse):
             raise BadRequestError(message='invalid request type')
 
         user_image = payload.get('image', None)
-        print(
-            '****', user_image, type(user_image)
-        )
+
         ticket_service.create_ticket(
             report=report,
             location=location,

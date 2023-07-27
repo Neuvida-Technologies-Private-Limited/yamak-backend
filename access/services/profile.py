@@ -44,6 +44,16 @@ def get_user_profile(user: User):
 
     return profile_details
 
+def get_dispatch_centers():
+
+    # Extract the user id
+    user_id = get_user_type_id(UserTypes.FIREFIGHTER)
+
+    # Get disptach centers list
+    dispatch_centers = list(User.objects.filter(user_type=user_id).values('first_name', 'last_name'))
+
+    return dispatch_centers
+
 def create_user(email: str, password: str, first_name: str, last_name: str, user_type) -> User:
     """Create a new auth user"""
 

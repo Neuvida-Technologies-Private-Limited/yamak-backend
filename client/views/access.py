@@ -109,9 +109,23 @@ class GetProfileDetailsView(APIView, APIResponse):
 
         profile_details = profile_service.get_user_profile(user)
 
-        print('****', profile_details, '****', type(profile_details))
-
         return self.get_success_response(json_response=profile_details)
+
+class GetDispatchCenterView(APIView, APIResponse):
+    """logout/revoke tokens"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        #Todo: Currently this API is open for everyone.
+        #Modify the API such that only firefighters can access this
+
+        # Get the detials of disptach centers
+        dispatch_center_list = profile_service.get_dispatch_centers()
+
+        return self.get_success_response(json_response=dispatch_center_list)
+
 
 class SignUpView(APIView, APIResponse):
     """Add user vis generating and verifying otp"""
