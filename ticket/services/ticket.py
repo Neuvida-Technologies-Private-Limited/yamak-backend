@@ -1,4 +1,5 @@
 from access.models import User
+from access.models import UserTypes
 from ticket.models import Ticket
 from access.services import profile_service
 import base64
@@ -12,18 +13,60 @@ def create_ticket(report, location, user: User, user_image) -> Ticket:
     
     return ticket
 
+def update_disptach_center(
+            ticket_id: str,
+            user: User
+        ) -> None:
     
+    # Fetch the ticket
+    ticket = Ticket.objects.filter(ticket_id=ticket_id).last()
+
+    # Update the dispatch center of the ticket
+    ticket.disptach_center = user
+
+    # Save the ticket
+    ticket.save()
+
+    return
+
 def get_ticket_history(user: User) -> list:
 
-    # user_type = profile_service.check_user_type(UserTypes.)
-    ticket = list(Ticket.objects.filter(user=user).values(
-        'report',
-        'location',
-        'status',
-        'user_image',
-        'created_at',
-        'modified_at'
-    ))
+    user_type = profile_service.get_user_profile(user).get('user_type')
+
+    # If the user is firefighter return all the tickets
+    if user_type == UserTypes.FIREFIGHTER:
+        ticket = list(Ticket.objects.filter().values(
+            'report',
+            'location',
+            'status',
+            'user_image',
+            'created_at',
+            'modified_at',
+            'disptach_center',
+            'ticket_id'
+        ))
+    elif user_type == UserTypes.DISPATCH_CENTER:
+        ticket = list(Ticket.objects.filter(disptach_center_id=user).values(
+            'report',
+            'location',
+            'status',
+            'user_image',
+            'created_at',
+            'modified_at',
+            'disptach_center',
+            'ticket_id'
+        ))        
+    else:
+        ticket = list(Ticket.objects.filter(user=user).values(
+            'report',
+            'location',
+            'status',
+            'user_image',
+            'created_at',
+            'modified_at',
+            'disptach_center',
+            'ticket_id'
+        ))
 
     ticket_copy = ticket
 

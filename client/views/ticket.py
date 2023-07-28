@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from access.services import auth_service
 from main.mixins.views import APIResponse
 from ticket.services import ticket_service
+from access.services import profile_service
 from main.mixins.exceptions import BadRequestError
 
 class CreateTicketView(APIView, APIResponse):
@@ -53,3 +54,36 @@ class GetTicketHistoryView(APIView, APIResponse):
         )
 
         return self.get_success_response(json_response={'ticket_history': history})
+
+
+class AssignDispatchCenterView(APIView, APIResponse):
+    """Assign Disptach center to a ticket"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+
+        # user = request.user
+
+        payload: dict = request.data
+
+        # Extract email of dispatch center
+        # Todo: Add the validation that the email should belong to a disptach center only.
+        email = payload.get('email', None)
+
+        if not email:
+            raise BadRequestError('invalid params')
+        
+        ticket_id = payload.get('ticket_id', None)
+        if not ticket_id:
+            raise BadRequestError('invalid params')
+
+        dispatch_center_user = profile_service.get_user(email=email)
+        # Todo: Add the validation later that only a firefighter
+        # can assign a disptach center to a ticket
+        ticket_service.update_disptach_center(
+            ticket_id=ticket_id,
+            user=dispatch_center_user
+        )
+
+        return self.get_success_response(json_response={'disptach_center_assigned': True})
