@@ -15,7 +15,7 @@ def create_ticket(report, location, user: User, user_image) -> Ticket:
     
 def get_ticket_history(user: User) -> list:
 
-    user_type = profile_service.check_user_type(UserTypes.)
+    # user_type = profile_service.check_user_type(UserTypes.)
     ticket = list(Ticket.objects.filter(user=user).values(
         'report',
         'location',
