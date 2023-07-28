@@ -25,6 +25,10 @@ class CreateTicketView(APIView, APIResponse):
 
         user_image = payload.get('image', None)
 
+        """ 
+        Todo: The create ticket should only work for USER911, 
+        if any other usertype tries to hit the API, there should be error
+        """
         ticket_service.create_ticket(
             report=report,
             location=location,
@@ -41,8 +45,6 @@ class GetTicketHistoryView(APIView, APIResponse):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        
-        payload: dict = request.data
 
         user = request.user
         

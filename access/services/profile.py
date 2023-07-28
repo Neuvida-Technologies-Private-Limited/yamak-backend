@@ -47,7 +47,7 @@ def get_user_profile(user: User):
 def get_dispatch_centers():
 
     # Extract the user id
-    user_id = get_user_type_id(UserTypes.FIREFIGHTER)
+    user_id = get_user_type_id(UserTypes.DISPATCH_CENTER)
 
     # Get disptach centers list
     dispatch_centers = list(User.objects.filter(user_type=user_id).values('first_name', 'last_name'))
