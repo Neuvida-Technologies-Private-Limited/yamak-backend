@@ -87,3 +87,35 @@ class AssignDispatchCenterView(APIView, APIResponse):
         )
 
         return self.get_success_response(json_response={'disptach_center_assigned': True})
+
+
+class UpdateStatusView(APIView, APIResponse):
+    """Assign Disptach center to a ticket"""
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+
+        # user = request.user
+
+        payload: dict = request.data
+
+        # Extract email of dispatch center
+        # Todo: Certain status should be changed by certain type of users only.
+        status = payload.get('status', None)
+        if not status:
+            raise BadRequestError('invalid params')
+
+        ticket_id = payload.get('ticket_id', None)
+        if not ticket_id:
+            raise BadRequestError('invalid params')
+
+        # dispatch_center_user = profile_service.get_user(email=email)
+        # Todo: Add the validation later that only a firefighter
+        # can assign a disptach center to a ticket
+        ticket_service.update_status(
+            ticket_id=ticket_id,
+            status=status
+        )
+
+        return self.get_success_response(json_response={'status_changed': True})

@@ -2,11 +2,16 @@ from access.models import User
 from access.models import UserTypes
 from ticket.models import Ticket
 from access.services import profile_service
+from ..constants import StatusTypes
 import base64
+import datetime
 
 def create_ticket(report, location, user: User, user_image) -> Ticket:
 
-    ticket = Ticket.objects.create(report=report, location=location, user=user, user_image=user_image)
+    history = {
+        StatusTypes.CREATED: datetime.datetime.now().isoformat()
+    }
+    ticket = Ticket.objects.create(report=report, location=location, user=user, user_image=user_image,history=history)
 
     if not ticket:
         Exception("Couldn't create ticket")
@@ -29,6 +34,24 @@ def update_disptach_center(
 
     return
 
+
+def update_status(ticket_id, status):
+
+    # Fetch older ticket
+    ticket = list(Ticket.objects.filter(ticket_id=ticket_id).values('history'))[0].get('history')
+
+    new_history = {
+        status: datetime.datetime.now().isoformat()
+    }
+
+    history = { **ticket ,
+        **new_history
+    }
+
+    Ticket.objects.filter(ticket_id=ticket_id).update(status=status, history=history)
+
+    return
+
 def get_ticket_history(user: User) -> list:
 
     user_type = profile_service.get_user_profile(user).get('user_type')
@@ -43,7 +66,8 @@ def get_ticket_history(user: User) -> list:
             'created_at',
             'modified_at',
             'disptach_center',
-            'ticket_id'
+            'ticket_id',
+            'history'
         ))
     elif user_type == UserTypes.DISPATCH_CENTER:
         ticket = list(Ticket.objects.filter(disptach_center_id=user).values(

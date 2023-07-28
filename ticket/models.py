@@ -1,5 +1,6 @@
 from django.db import models
 from djutil.models import TimeStampedModel
+import jsonfield
 import uuid
 from access.models import User
 from .constants import StatusTypes
@@ -20,6 +21,6 @@ class Ticket(TimeStampedModel):
     location = models.CharField(max_length=100, default=None, blank=False)
     # Add image in the tickets too
     user_image = models.ImageField(upload_to='images') 
-    
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True, related_name='Ticket creator+')
     disptach_center = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, default=None)
+    history = jsonfield.JSONField()
