@@ -50,7 +50,7 @@ def get_dispatch_centers():
     user_id = get_user_type_id(UserTypes.DISPATCH_CENTER)
 
     # Get disptach centers list
-    dispatch_centers = list(User.objects.filter(user_type=user_id).values('first_name', 'last_name'))
+    dispatch_centers = list(User.objects.filter(user_type=user_id).values('first_name', 'last_name', 'email'))
 
     return dispatch_centers
 
